@@ -1,32 +1,47 @@
 import {createElement} from '../render.js';
+import { TIME_FORMATS } from '../const';
+import { formatDate, formatDuration } from '../utils';
 
 
-function creatRoutePointElementTemplate () {
+function creatRoutePointElementTemplate (point, offer, destination) {
+  const {name} = destination;
+  const {type, offers} = offer;
+  const {date_from : dateFrom, date_to: dateTo, base_price: basePrice} = point;
+
+  const offersList = offers
+    .map((offerElement) => {
+      const offerPrice = offerElement.price;
+      const offerTitle = offerElement.title.toLowerCase().split(' ').join('-');
+
+      return `<li class="event__offer">
+      <span class="event__offer-title">${offerTitle}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${offerPrice}</span>
+    </li>`;
+    })
+    .join('');
+
   return `<li class="trip-events__item">
               <div class="event">
-                <time class="event__date" datetime="2019-03-18">MAR 18</time>
+                <time class="event__date" datetime="${formatDate(dateFrom, TIME_FORMATS['TIME_TAG_VALUE'])}">${formatDate(dateFrom, TIME_FORMATS['DAY'])}</time>
                 <div class="event__type">
-                  <img class="event__type-icon" width="42" height="42" src="img/icons/drive.png" alt="Event type icon">
+                  <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
                 </div>
-                <h3 class="event__title">Drive Chamonix</h3>
+                <h3 class="event__title">${type} ${name}</h3>
                 <div class="event__schedule">
                   <p class="event__time">
-                    <time class="event__start-time" datetime="2019-03-18T14:30">14:30</time>
+                    <time class="event__start-time" datetime="${dateFrom}">${formatDate(dateFrom, TIME_FORMATS['TIME'])}</time>
                     &mdash;
-                    <time class="event__end-time" datetime="2019-03-18T16:05">16:05</time>
+                    <time class="event__end-time" datetime=""${dateTo}">${formatDate(dateTo, TIME_FORMATS['TIME'])}</time>
                   </p>
-                  <p class="event__duration">01H 35M</p>
+                  <p class="event__duration">${formatDuration(dateFrom, dateTo)}</p>
                 </div>
                 <p class="event__price">
-                  &euro;&nbsp;<span class="event__price-value">160</span>
+                  &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
                 </p>
                 <h4 class="visually-hidden">Offers:</h4>
                 <ul class="event__selected-offers">
-                  <li class="event__offer">
-                    <span class="event__offer-title">Rent a car</span>
-                    &plus;&euro;&nbsp;
-                    <span class="event__offer-price">200</span>
-                  </li>
+                  ${offersList}
                 </ul>
                 <button class="event__favorite-btn  event__favorite-btn--active" type="button">
                   <span class="visually-hidden">Add to favorite</span>
@@ -42,8 +57,14 @@ function creatRoutePointElementTemplate () {
 }
 
 export default class RoutePointElement {
+  constructor(point, offer, destination) {
+    this.point = point;
+    this.offer = offer;
+    this.destination = destination;
+  }
+
   getTemplate() {
-    return creatRoutePointElementTemplate();
+    return creatRoutePointElementTemplate(this.point, this.offer, this.destination);
   }
 
   getElement() {
