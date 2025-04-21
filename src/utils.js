@@ -73,3 +73,16 @@ export function formatDuration(dateFrom, dateTo) {
 
   return durationResult.join(' ');
 }
+
+
+export function isPointPresent(point) {
+  return dayjs().isAfter(dayjs(point.date_from)) && dayjs().isBefore(dayjs(point.date_to));
+}
+
+export function isPointFuture(point) {
+  return dayjs().isBefore(dayjs(point.date_to));
+}
+
+export function isPointPast(point) {
+  return dayjs().isAfter(dayjs(point.date_from));
+}
