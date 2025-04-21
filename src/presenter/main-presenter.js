@@ -1,4 +1,4 @@
-import {render} from '../render.js';
+import {render, replace} from '../framework/render.js';
 import Filters from '../view/filters-view.js';
 import Sorting from '../view/sorting-view.js';
 import RoutePointList from '../view/route-point-list-view.js';
@@ -11,31 +11,85 @@ import DestinationsModel from '../model/destinations-model.js';
 
 
 export default class Presenter {
+  #routePointListElement = null;
+  #pointsModel = null;
+  #offersModel = null;
+  #destinationsModel = null;
+
+  #pointsArray = [];
+  #offersArray = [];
+  #destinationsArray = [];
+
   constructor() {
     this.tripControlFilters = document.querySelector('.trip-controls__filters');
     this.tripEvents = document.querySelector('.trip-events');
-    this.routePointListElement = new RoutePointList();
-    this.pointsModel = new PointsModel();
-    this.offersModel = new OffersModel();
-    this.destinationsModel = new DestinationsModel();
+    this.#routePointListElement = new RoutePointList();
+    this.#pointsModel = new PointsModel();
+    this.#offersModel = new OffersModel();
+    this.#destinationsModel = new DestinationsModel();
   }
 
-  init() {
-    this.pointsArray = [...this.pointsModel.getPoints()];
-    this.offersArray = [...this.offersModel.getOffers()];
-    this.destinationsModel = [...this.destinationsModel.getDestinations()];
 
+  init() {
+    this.#pointsArray = [...this.#pointsModel.getPoints()];
+    this.#offersArray = [...this.#offersModel.getOffers()];
+    this.#destinationsArray = [...this.#destinationsModel.getDestinations()];
+
+    this.#renderBoard();
+  }
+
+
+  #renderBoard() {
     render(new Filters(), this.tripControlFilters);
     render(new Sorting(), this.tripEvents);
-    render(this.routePointListElement, this.tripEvents);
-    render(new FromEditing(this.pointsArray[0], this.offersArray[0],
-      this.destinationsModel[0]), this.routePointListElement.getElement());
+    render(this.#routePointListElement, this.tripEvents);
 
-    for (let i = 0; i < this.pointsArray.length; i++) {
-      render(new RoutePointElement(this.pointsArray[i], this.offersArray[i],
-        this.destinationsModel[i]), this.routePointListElement.getElement());
+    for (let i = 0; i < this.#pointsArray.length; i++) {
+      this.#renderPointTask(this.#pointsArray[i], this.#offersArray[i],
+        this.#destinationsArray[i]);
     }
 
-    render(new FormCreation(), this.routePointListElement.getElement());
+    render(new FormCreation(), this.#routePointListElement.element);
+  }
+
+
+  #renderPointTask(point, offer, destination) {
+    const escKeyHandler = (evt) => {
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        replaceEditToTask();
+        document.removeEventListener('keydown', escKeyHandler);
+      }
+    };
+
+    const pointTask = new RoutePointElement({
+      point,
+      offer,
+      destination,
+      onEditClick: () => {
+        replaceTaskToEdit();
+        document.addEventListener('keydown', escKeyHandler);
+      }
+    });
+
+    const pointEdit = new FromEditing({
+      point,
+      offer,
+      destination,
+      onTaskClick: () => {
+        replaceEditToTask();
+        document.removeEventListener('keydown', escKeyHandler);
+      }
+    });
+
+    function replaceEditToTask () {
+      replace(pointTask, pointEdit);
+    }
+
+    function replaceTaskToEdit () {
+      replace(pointEdit, pointTask);
+    }
+
+    render(pointTask, this.#routePointListElement.element);
   }
 }

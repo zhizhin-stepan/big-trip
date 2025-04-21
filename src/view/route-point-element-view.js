@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { TIME_FORMATS } from '../const';
 import { formatDate, formatDuration } from '../utils';
 
@@ -56,26 +56,28 @@ function creatRoutePointElementTemplate (point, offer, destination) {
             </li>`;
 }
 
-export default class RoutePointElement {
-  constructor(point, offer, destination) {
-    this.point = point;
-    this.offer = offer;
-    this.destination = destination;
+export default class RoutePointElement extends AbstractView{
+  #point = null;
+  #offer = null;
+  #destination = null;
+  #editHandle = null;
+
+  constructor({point, offer, destination, onEditClick}) {
+    super();
+    this.#point = point;
+    this.#offer = offer;
+    this.#destination = destination;
+    this.#editHandle = onEditClick;
+
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editHadlerClick);
   }
 
-  getTemplate() {
-    return creatRoutePointElementTemplate(this.point, this.offer, this.destination);
+  get template() {
+    return creatRoutePointElementTemplate(this.#point, this.#offer, this.#destination);
   }
 
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #editHadlerClick = (evt) => {
+    evt.preventDefault();
+    this.#editHandle();
+  };
 }

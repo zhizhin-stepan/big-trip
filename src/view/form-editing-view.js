@@ -1,11 +1,11 @@
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view.js';
 import { TIME_FORMATS } from '../const';
 import { formatDate } from '../utils';
 
 
 function createFormEditingTemplate (point, offer, destination) {
   const {name, description} = destination;
-  const {offers} = offer;
+  const {type, offers} = offer;
   const {date_from : dateFrom, date_to: dateTo, base_price: basePrice} = point;
 
   const offersList = offers
@@ -31,7 +31,7 @@ function createFormEditingTemplate (point, offer, destination) {
                   <div class="event__type-wrapper">
                     <label class="event__type  event__type-btn" for="event-type-toggle-1">
                       <span class="visually-hidden">Choose event type</span>
-                      <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+                      <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
                     </label>
                     <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -89,7 +89,7 @@ function createFormEditingTemplate (point, offer, destination) {
 
                   <div class="event__field-group  event__field-group--destination">
                     <label class="event__label  event__type-output" for="event-destination-1">
-                      Flight
+                      ${type}
                     </label>
                     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
                     <datalist id="destination-list-1">
@@ -139,26 +139,29 @@ function createFormEditingTemplate (point, offer, destination) {
             </li>`;
 }
 
-export default class FromEditing {
-  constructor(point, offer, destination) {
-    this.point = point;
-    this.offer = offer;
-    this.destination = destination;
+export default class FromEditing extends AbstractView{
+  #point = null;
+  #offer = null;
+  #destination = null;
+  #taskHadle = null;
+
+  constructor({point, offer, destination, onTaskClick}) {
+    super();
+    this.#point = point;
+    this.#offer = offer;
+    this.#destination = destination;
+    this.#taskHadle = onTaskClick;
+
+    this.element.querySelector('.event').addEventListener('submit', this.#taskHandlerClick);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#taskHandlerClick);
   }
 
-  getTemplate() {
-    return createFormEditingTemplate(this.point, this.offer, this.destination);
+  get template() {
+    return createFormEditingTemplate(this.#point, this.#offer, this.#destination);
   }
 
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #taskHandlerClick = (evt) => {
+    evt.preventDefault();
+    this.#taskHadle();
+  };
 }
