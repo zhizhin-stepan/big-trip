@@ -9,7 +9,7 @@ export const getRandomArrayElement = (array) => {
 };
 
 export const getRandomValue = (minPrice, maxPrice) => {
-  const randomPrice = Math.floor(Math.random() * (maxPrice - minPrice) + minPrice);
+  const randomPrice = Math.round(Math.random() * (maxPrice - minPrice) + minPrice);
 
   return randomPrice;
 };
@@ -85,4 +85,9 @@ export function isPointFuture(point) {
 
 export function isPointPast(point) {
   return dayjs().isAfter(dayjs(point.date_from));
+}
+
+
+export function updatePointData(points, updatedPointData) {
+  return points.map((point) => point.id === updatedPointData.id ? updatedPointData : point);
 }

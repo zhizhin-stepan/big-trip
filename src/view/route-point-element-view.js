@@ -6,7 +6,7 @@ import { formatDate, formatDuration } from '../utils';
 function creatRoutePointElementTemplate (point, offer, destination) {
   const {name} = destination;
   const {type, offers} = offer;
-  const {date_from : dateFrom, date_to: dateTo, base_price: basePrice} = point;
+  const {date_from : dateFrom, date_to: dateTo, base_price: basePrice, isFavorite: isFavorite} = point;
 
   const offersList = offers
     .map((offerElement) => {
@@ -20,6 +20,10 @@ function creatRoutePointElementTemplate (point, offer, destination) {
     </li>`;
     })
     .join('');
+
+  const favoriteCheck = isFavorite
+    ? '--active'
+    : '';
 
   return `<li class="trip-events__item">
               <div class="event">
@@ -43,7 +47,7 @@ function creatRoutePointElementTemplate (point, offer, destination) {
                 <ul class="event__selected-offers">
                   ${offersList}
                 </ul>
-                <button class="event__favorite-btn  event__favorite-btn--active" type="button">
+                <button class="event__favorite-btn  event__favorite-btn${favoriteCheck}" type="button">
                   <span class="visually-hidden">Add to favorite</span>
                   <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
                     <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
@@ -61,15 +65,18 @@ export default class RoutePointElement extends AbstractView{
   #offer = null;
   #destination = null;
   #editHandle = null;
+  #favoriteHandle = null;
 
-  constructor({point, offer, destination, onEditClick}) {
+  constructor({point, offer, destination, onEditClick, onFavoriteClick}) {
     super();
     this.#point = point;
     this.#offer = offer;
     this.#destination = destination;
     this.#editHandle = onEditClick;
+    this.#favoriteHandle = onFavoriteClick;
 
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editHadlerClick);
+    this.element.querySelector('.event__favorite-icon').addEventListener('click', this.#favoriteHandlerClick);
   }
 
   get template() {
@@ -79,5 +86,10 @@ export default class RoutePointElement extends AbstractView{
   #editHadlerClick = (evt) => {
     evt.preventDefault();
     this.#editHandle();
+  };
+
+  #favoriteHandlerClick = (evt) => {
+    evt.preventDefault();
+    this.#favoriteHandle();
   };
 }
