@@ -21,3 +21,8 @@ export const FILTERS = {
   [FILTER_TYPES.PRESENT]: (points) => points.filter((point) => isPointPresent(point)),
   [FILTER_TYPES.PAST]: (points) => points.filter((point) => isPointPast(point))
 };
+
+export const MODE = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING'
+};
