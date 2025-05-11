@@ -6,7 +6,7 @@ import { formatDate, formatDuration } from '../utils';
 function creatRoutePointElementTemplate (point, offer, destination) {
   const {name} = destination;
   const {type, offers} = offer;
-  const {date_from : dateFrom, date_to: dateTo, base_price: basePrice, isFavorite: isFavorite} = point;
+  const {dateFrom : dateFrom, dateTo: dateTo, basePrice: basePrice, isFavorite: isFavorite} = point;
 
   const offersList = offers
     .map((offerElement) => {

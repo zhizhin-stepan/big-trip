@@ -1,6 +1,7 @@
-import {render} from '../framework/render.js';
+import {render, remove} from '../framework/render.js';
 import {generateFilters} from '../mock/filters-mock.js';
-import {updatePointData} from '../utils.js';
+import {updatePointData, sortByDay, sortByPrice, sortByDuration} from '../utils.js';
+import {SORT_TYPES} from '../const.js';
 import Filters from '../view/filters-view.js';
 import Sorting from '../view/sorting-view.js';
 import RoutePointList from '../view/route-point-list-view.js';
@@ -19,6 +20,9 @@ export default class Presenter {
   #filters = null;
   #tripControlFilters = null;
   #tripEvents = null;
+  #sortComponent = null;
+  #filterComponent = null;
+  #currentSortType = SORT_TYPES[0];
 
   #pointsArray = [];
   #offersArray = [];
@@ -47,15 +51,6 @@ export default class Presenter {
   }
 
 
-  #handleModeChange = () => {
-    this.#pointPresenters.forEach((pointPresenter) => pointPresenter.resetView());
-  };
-
-  #handlePointDataChange = (updatedPoint) => {
-    this.#pointsArray = updatePointData(this.#pointsArray, updatedPoint);
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
-  };
-
   #renderPointTask(point, offer, destination) {
     const taskPresenter = new TaskPresenter(
       offer,
@@ -71,8 +66,12 @@ export default class Presenter {
 
   #renderBoard() {
     if (this.#pointsArray.length > 0) {
-      render(new Filters(this.#filters), this.#tripControlFilters);
-      render(new Sorting(), this.#tripEvents);
+      this.#filterComponent = new Filters(this.#filters);
+      render(this.#filterComponent, this.#tripControlFilters);
+
+      this.#sortComponent = new Sorting({sortType: this.#currentSortType, onSortTypeChange: this.#handleSortTypeChange});
+      this.#sortWaypoints();
+      render(this.#sortComponent, this.#tripEvents);
       render(this.#routePointListElement, this.#tripEvents);
 
       for (let i = 0; i < this.#pointsArray.length; i++) {
@@ -83,4 +82,52 @@ export default class Presenter {
       render(new EmptyPointList(), this.#tripEvents);
     }
   }
+
+
+  #sortWaypoints() {
+    switch(this.#currentSortType) {
+      case SORT_TYPES[0]:
+        this.#pointsArray.sort(sortByDay);
+        break;
+      case SORT_TYPES[2]:
+        this.#pointsArray.sort(sortByDuration);
+        break;
+      case SORT_TYPES[3]:
+        this.#pointsArray.sort(sortByPrice);
+        break;
+      default:
+        break;
+    }
+  }
+
+  #clearListView() {
+    this.#pointPresenters.forEach((pointPresenter) => {
+      pointPresenter.destroy();
+    });
+    this.#pointPresenters.clear();
+    remove(this.#sortComponent);
+    remove(this.#routePointListElement);
+    remove(this.#filterComponent);
+  }
+
+
+  #handleModeChange = () => {
+    this.#pointPresenters.forEach((pointPresenter) => pointPresenter.resetView());
+  };
+
+  #handlePointDataChange = (updatedPoint) => {
+    this.#pointsArray = updatePointData(this.#pointsArray, updatedPoint);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  };
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortWaypoints();
+    this.#currentSortType = sortType;
+    this.#clearListView();
+    this.#renderBoard();
+  };
 }
