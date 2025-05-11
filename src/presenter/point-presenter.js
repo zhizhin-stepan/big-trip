@@ -80,6 +80,10 @@ export default class TaskPresenter {
     remove(prevEditFormComponent);
   }
 
+  destroy() {
+    remove(this.#pointTask);
+    remove(this.#pointEdit);
+  }
 
   resetView() {
     if (this.#mode !== MODE.DEFAULT) {

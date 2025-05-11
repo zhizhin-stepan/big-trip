@@ -54,8 +54,10 @@ export function formatDuration(dateFrom, dateTo) {
   const durationAllMinutes = endTime.diff(startTime, 'minute');
 
   const durationDays = Math.floor(durationAllMinutes / 1440);
-  const durationHours = Math.floor((durationAllMinutes % 1440) / 60);
-  const durationsMinutes = Math.floor((durationAllMinutes % 1440) % 60);
+  const remainingMinutes = durationAllMinutes % 1440;
+  const durationHours = Math.floor(remainingMinutes / 60);
+  const durationsMinutes = remainingMinutes % 60 + 1;
+
   const durationElements = [durationDays, durationHours, durationsMinutes];
   const durationResult = [];
 
@@ -71,7 +73,7 @@ export function formatDuration(dateFrom, dateTo) {
 
   }
 
-  return durationResult.join(' ');
+  return durationResult.join(' ') || '00M';
 }
 
 
@@ -90,4 +92,18 @@ export function isPointPast(point) {
 
 export function updatePointData(points, updatedPointData) {
   return points.map((point) => point.id === updatedPointData.id ? updatedPointData : point);
+}
+
+
+export function sortByDay(pointA, pointB) {
+  return new Date(pointA.dateFrom) - new Date(pointB.dateFrom);
+}
+
+export function sortByPrice(pointA, pointB) {
+  return pointB.basePrice - pointA.basePrice;
+}
+
+export function sortByDuration(pointA, pointB) {
+  return dayjs(pointB.dateTo).diff(dayjs(pointB.dateFrom)) -
+    dayjs(pointA.dateTo).diff(dayjs(pointA.dateFrom));
 }
