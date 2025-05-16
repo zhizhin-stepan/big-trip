@@ -55,6 +55,8 @@ export default class Presenter {
     const taskPresenter = new TaskPresenter(
       offer,
       destination,
+      this.#destinationsArray,
+      this.#offersArray,
       this.#routePointListElement.element,
       this.#handleModeChange,
       this.#handlePointDataChange

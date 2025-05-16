@@ -1,12 +1,12 @@
-import AbstractView from '../framework/view/abstract-view.js';
-import { TIME_FORMATS } from '../const';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
+import { TIME_FORMATS} from '../const';
 import { formatDate } from '../utils';
 
 
-function createFormEditingTemplate (point, offer, destination) {
-  const {name, description} = destination;
-  const {type, offers} = offer;
-  const {date_from : dateFrom, date_to: dateTo, base_price: basePrice} = point;
+function createFormEditingTemplate (point) {
+  // const {name, description} = destination;
+  // const {} = offer;
+  const {dateFrom : dateFrom, dateTo: dateTo, basePrice: basePrice, type: type, offers: offers, destination: name, description: description} = point;
 
   const offersList = offers
     .map((offerElement) => {
@@ -93,9 +93,11 @@ function createFormEditingTemplate (point, offer, destination) {
                     </label>
                     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
                     <datalist id="destination-list-1">
+                      <option value="Paris"></option>
                       <option value="Amsterdam"></option>
-                      <option value="Geneva"></option>
-                      <option value="Chamonix"></option>
+                      <option value="Barcelona"></option>
+                      <option value="Dublin"></option>
+                      <option value="Vienna"></option>
                     </datalist>
                   </div>
 
@@ -122,46 +124,125 @@ function createFormEditingTemplate (point, offer, destination) {
                   </button>
                 </header>
                 <section class="event__details">
-                  <section class="event__section  event__section--offers">
+                  ${offersList.length > 0 ? `<section class="event__section  event__section--offers">
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
                     <div class="event__available-offers">
                       ${offersList}
                     </div>
-                  </section>
+                  </section>` : ''}
 
-                  <section class="event__section  event__section--destination">
+                  ${description !== '' ? `<section class="event__section  event__section--destination">
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                     <p class="event__destination-description">${description}</p>
-                  </section>
+                  </section>` : ''}
                 </section>
               </form>
             </li>`;
 }
 
-export default class FromEditing extends AbstractView{
+export default class FromEditing extends AbstractStatefulView{
   #point = null;
   #offer = null;
   #destination = null;
-  #taskHadle = null;
+  #allDestinations = null;
+  #allOffers = null;
+  #rollupHadle = null;
+  #formHandle = null;
 
-  constructor({point, offer, destination, onTaskClick}) {
+  constructor({point, offer, destination, allDestinations, allOffers, onRollupClick, onFormSubmit}) {
     super();
     this.#point = point;
     this.#offer = offer;
     this.#destination = destination;
-    this.#taskHadle = onTaskClick;
+    this.#allDestinations = allDestinations;
+    this.#allOffers = allOffers;
+    this._setState(FromEditing.parsePointToState(this.#point, this.#offer, this.#destination));
+    this.#rollupHadle = onRollupClick;
+    this.#formHandle = onFormSubmit;
 
-    this.element.querySelector('.event').addEventListener('submit', this.#taskHandlerClick);
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#taskHandlerClick);
+    this._restoreHandlers();
   }
 
   get template() {
-    return createFormEditingTemplate(this.#point, this.#offer, this.#destination);
+    return createFormEditingTemplate(this._state);
   }
 
-  #taskHandlerClick = (evt) => {
+  reset() {
+    this.updateElement(FromEditing.parseStateToPoint({
+      ...this.#point,
+      type: this.#offer.type,
+      offers: this.#offer.offers,
+      destination: this.#destination.name,
+      description: this.#destination.description
+    }));
+  }
+
+  _restoreHandlers() {
+    this.element.querySelector('.event').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupHandlerClick);
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeHandlerChange);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationHandlerChange);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#priceHandlerChange);
+  }
+
+  #pointTypeHandlerChange = (evt) => {
     evt.preventDefault();
-    this.#taskHadle();
+    const targetType = evt.target.value;
+    const typeOffers = this.#allOffers.find((offers) => offers.type === targetType);
+    this.updateElement({
+      offers: typeOffers.offers,
+      type: targetType
+    });
   };
+
+  #destinationHandlerChange = (evt) => {
+    evt.preventDefault();
+    const targetDestination = evt.target.value;
+    const newDestination = this.#allDestinations.find((destination) => destination.name === targetDestination);
+    this.updateElement({
+      destination: newDestination.name,
+      description: newDestination.description
+    });
+  };
+
+  #priceHandlerChange = (evt) => {
+    evt.preventDefault();
+    const newPrice = evt.target.value;
+    this._setState({
+      basePrice: newPrice
+    });
+  };
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#formHandle(FromEditing.parseStateToPoint(this._state));
+  };
+
+  #rollupHandlerClick = (evt) => {
+    evt.preventDefault();
+    this.#rollupHadle();
+  };
+
+
+  static parsePointToState(point, offer, destination) {
+    return {
+      ...point,
+      type: offer.type,
+      offers: offer.offers,
+      destination: destination.name,
+      description: destination.description
+    };
+  }
+
+  static parseStateToPoint(state) {
+    const point = {...state};
+
+    if (!point.description) {
+      point.description = null;
+    }
+
+    delete point.description;
+    return point;
+  }
 }
