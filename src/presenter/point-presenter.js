@@ -8,6 +8,8 @@ export default class TaskPresenter {
   #point = null;
   #offer = null;
   #destination = null;
+  #allDestinations = null;
+  #allOffers = null;
   #mode = MODE.DEFAULT;
 
   #pointTask = null;
@@ -20,14 +22,17 @@ export default class TaskPresenter {
   #escKeyHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+      this.#pointEdit.reset();
       this.#replaceEditToTask();
       document.removeEventListener('keydown', this.#escKeyHandler);
     }
   };
 
-  constructor(offer, destination, pointsListComponent, onModeChange, onDataChange) {
+  constructor(offer, destination, allDestinations, allOffers, pointsListComponent, onModeChange, onDataChange) {
     this.#offer = offer;
     this.#destination = destination;
+    this.#allDestinations = allDestinations;
+    this.#allOffers = allOffers;
     this.#pointsListComponent = pointsListComponent;
     this.#handleModeChange = onModeChange;
     this.#handleDataChange = onDataChange;
@@ -35,6 +40,9 @@ export default class TaskPresenter {
 
   init(point) {
     this.#point = point;
+    this.#offer = this.#allOffers.find((offer) => offer.type === point.type ? offer : null);
+    this.#destination = this.#allDestinations.find((destination) => destination.name === point.destination ? destination : null);
+
 
     const prevPointComponent = this.#pointTask;
     const prevEditFormComponent = this.#pointEdit;
@@ -56,9 +64,16 @@ export default class TaskPresenter {
       point: this.#point,
       offer: this.#offer,
       destination: this.#destination,
-      onTaskClick: () => {
+      allDestinations: this.#allDestinations,
+      allOffers: this.#allOffers,
+      onRollupClick: () => {
+        this.#pointEdit.reset();
         this.#replaceEditToTask();
         document.removeEventListener('keydown', this.#escKeyHandler);
+      },
+      onFormSubmit: (newPoint) => {
+        this.#handleDataChange({...newPoint});
+        this.#replaceEditToTask();
       }
     });
 

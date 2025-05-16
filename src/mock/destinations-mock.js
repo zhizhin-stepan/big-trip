@@ -27,7 +27,7 @@ export const destinationsElementsMock = [
   },
   {
     'id': '3',
-    'description': 'A sun-drenched city boasting Gaudí’s architectural wonders and a passionate soul.',
+    'description': '',
     'name': 'Barcelona',
     'pictures': []
   },

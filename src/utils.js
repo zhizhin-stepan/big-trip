@@ -62,13 +62,11 @@ export function formatDuration(dateFrom, dateTo) {
   const durationResult = [];
 
   for (let i = 0; i < durationElements.length; i++) {
-    if (durationElements[i] > 0) {
-      if (durationElements[i] < 10) {
-        durationResult.push(`0${durationElements[i]}${TIME_SUFFIXES[i]}`);
-        continue;
-      }
-
-      durationResult.push(`${durationElements[i]}D`);
+    const value = durationElements[i];
+    if (value > 0) {
+      const suffix = TIME_SUFFIXES[i];
+      const paddedValue = value < 10 ? `0${value}` : value;
+      durationResult.push(`${paddedValue}${suffix}`);
     }
 
   }

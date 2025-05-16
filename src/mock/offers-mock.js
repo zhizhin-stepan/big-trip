@@ -67,5 +67,105 @@ export const offersElementsMock = [
   {
     'type': 'flight',
     'offers': []
+  },
+  {
+    type: 'bus',
+    offers: [
+      {
+        id: '1',
+        title: 'Priority seating selection',
+        price: getRandomValue(MIN_PRICE, MAX_PRICE)
+      },
+      {
+        id: '2',
+        title: 'Air conditioning guaranteed',
+        price: getRandomValue(MIN_PRICE, MAX_PRICE)
+      },
+      {
+        id: '3',
+        title: 'Extra luggage space',
+        price: getRandomValue(MIN_PRICE, MAX_PRICE)
+      }
+    ]
+  },
+  {
+    type: 'train',
+    offers: [
+      {
+        id: '1',
+        title: 'First class compartment',
+        price: getRandomValue(MIN_PRICE, MAX_PRICE)
+      },
+      {
+        id: '2',
+        title: 'Dining car access',
+        price: getRandomValue(MIN_PRICE, MAX_PRICE)
+      },
+      {
+        id: '3',
+        title: 'Private cabin upgrade',
+        price: getRandomValue(MIN_PRICE, MAX_PRICE)
+      }
+    ]
+  },
+  {
+    type: 'ship',
+    offers: [
+      {
+        id: '1',
+        title: 'Cabin with ocean view',
+        price: getRandomValue(MIN_PRICE, MAX_PRICE)
+      },
+      {
+        id: '2',
+        title: 'VIP deck access',
+        price: getRandomValue(MIN_PRICE, MAX_PRICE)
+      },
+      {
+        id: '3',
+        title: 'Fishing equipment rental',
+        price: getRandomValue(MIN_PRICE, MAX_PRICE)
+      }
+    ]
+  },
+  {
+    type: 'drive',
+    offers: [
+      {
+        id: '1',
+        title: 'Car insurance included',
+        price: getRandomValue(MIN_PRICE, MAX_PRICE)
+      },
+      {
+        id: '2',
+        title: 'GPS navigation system',
+        price: getRandomValue(MIN_PRICE, MAX_PRICE)
+      },
+      {
+        id: '3',
+        title: 'Child seat rental',
+        price: getRandomValue(MIN_PRICE, MAX_PRICE)
+      }
+    ]
+  },
+  {
+    type: 'restaurant',
+    offers: [
+      {
+        id: '1',
+        title: 'Window table reservation',
+        price: getRandomValue(MIN_PRICE, MAX_PRICE)
+      },
+      {
+        id: '2',
+        title: 'Chef\'s special menu',
+        price: getRandomValue(MIN_PRICE, MAX_PRICE)
+      },
+      {
+        id: '3',
+        title: 'Wine pairing selection',
+        price: getRandomValue(MIN_PRICE, MAX_PRICE)
+      }
+    ]
   }
 ];
