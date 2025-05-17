@@ -30,45 +30,6 @@ export const offersElementsMock = [
     ]
   },
   {
-    'type': 'sightseeing',
-    'offers': [
-      {
-        'id': '1',
-        'title': 'Modern sights mostly.',
-        'price': getRandomValue(MIN_PRICE, MAX_PRICE)
-      },
-      {
-        'id': '2',
-        'title': 'A way without lots of people.',
-        'price': getRandomValue(MIN_PRICE, MAX_PRICE)
-      }
-    ]
-  },
-  {
-    'type': 'check-in',
-    'offers': [
-      {
-        'id': '1',
-        'title': 'Choose the time of check-in.',
-        'price': getRandomValue(MIN_PRICE, MAX_PRICE)
-      },
-      {
-        'id': '2',
-        'title': 'Choose the time of check-out.',
-        'price': getRandomValue(MIN_PRICE, MAX_PRICE)
-      },
-      {
-        'id': '3',
-        'title': 'Add breakfast.',
-        'price': getRandomValue(MIN_PRICE, MAX_PRICE)
-      }
-    ]
-  },
-  {
-    'type': 'flight',
-    'offers': []
-  },
-  {
     type: 'bus',
     offers: [
       {
@@ -145,6 +106,45 @@ export const offersElementsMock = [
         id: '3',
         title: 'Child seat rental',
         price: getRandomValue(MIN_PRICE, MAX_PRICE)
+      }
+    ]
+  },
+  {
+    'type': 'flight',
+    'offers': []
+  },
+  {
+    'type': 'check-in',
+    'offers': [
+      {
+        'id': '1',
+        'title': 'Choose the time of check-in.',
+        'price': getRandomValue(MIN_PRICE, MAX_PRICE)
+      },
+      {
+        'id': '2',
+        'title': 'Choose the time of check-out.',
+        'price': getRandomValue(MIN_PRICE, MAX_PRICE)
+      },
+      {
+        'id': '3',
+        'title': 'Add breakfast.',
+        'price': getRandomValue(MIN_PRICE, MAX_PRICE)
+      }
+    ]
+  },
+  {
+    'type': 'sightseeing',
+    'offers': [
+      {
+        'id': '1',
+        'title': 'Modern sights mostly.',
+        'price': getRandomValue(MIN_PRICE, MAX_PRICE)
+      },
+      {
+        'id': '2',
+        'title': 'A way without lots of people.',
+        'price': getRandomValue(MIN_PRICE, MAX_PRICE)
       }
     ]
   },
