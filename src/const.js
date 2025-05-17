@@ -1,7 +1,7 @@
 import {isPointPresent, isPointPast, isPointFuture} from './utils.js';
 
 
-export const EVENT_TYPES = ['taxi', 'sightseeing', 'check-in', 'flight', 'bus', 'train', 'ship', 'drive', 'restaurant'];
+export const EVENT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 export const TIME_FORMATS = {TIME: 'HH:mm', DAY: 'MMM D', FULL_DATE: 'D/MM/YY HH:mm', TIME_TAG_VALUE: 'YYYY-MM-DD'};
 
