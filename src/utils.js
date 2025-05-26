@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { TIME_SUFFIXES } from './const';
+import {TIME_SUFFIXES} from './const';
 
 
 export const getRandomArrayElement = (array) => {
@@ -76,20 +76,19 @@ export function formatDuration(dateFrom, dateTo) {
 
 
 export function isPointPresent(point) {
-  return dayjs().isAfter(dayjs(point.date_from)) && dayjs().isBefore(dayjs(point.date_to));
+  const now = dayjs();
+  const start = dayjs(point.dateFrom);
+  const end = dayjs(point.dateTo);
+  return (now.isAfter(start) || now.isSame(start)) &&
+         (now.isBefore(end) || now.isSame(end));
 }
 
 export function isPointFuture(point) {
-  return dayjs().isBefore(dayjs(point.date_to));
+  return dayjs().isBefore(dayjs(point.dateFrom));
 }
 
 export function isPointPast(point) {
-  return dayjs().isAfter(dayjs(point.date_from));
-}
-
-
-export function updatePointData(points, updatedPointData) {
-  return points.map((point) => point.id === updatedPointData.id ? updatedPointData : point);
+  return dayjs().isAfter(dayjs(point.dateTo));
 }
 
 

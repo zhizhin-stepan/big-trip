@@ -2,13 +2,12 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { TIME_FORMATS, EVENT_TYPES} from '../const';
 import { formatDate } from '../utils';
 import flatpickr from 'flatpickr';
+import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
 
 function createFormEditingTemplate (point) {
-  // const {name, description} = destination;
-  // const {} = offer;
   const {dateFrom : dateFrom, dateTo: dateTo, basePrice: basePrice, type: type, offers: offers, destination: name, description: description} = point;
 
   const eventTypes = EVENT_TYPES
@@ -84,10 +83,10 @@ function createFormEditingTemplate (point) {
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${he.encode(String(basePrice))}">
                   </div>
 
-                  <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+                  <button class="event__save-btn  btn  btn--blue" type="submit" ${(basePrice > 0 && dateFrom !== '' && dateTo !== '' && name !== '') ? '' : 'disabled'}>Save</button>
                   <button class="event__reset-btn" type="reset">Delete</button>
                   <button class="event__rollup-btn" type="button">
                     <span class="visually-hidden">Open event</span>
@@ -119,10 +118,11 @@ export default class FromEditing extends AbstractStatefulView{
   #allOffers = null;
   #rollupHadle = null;
   #formHandle = null;
+  #deleteHandle = null;
   #datepickerStart = null;
   #datepickerEnd = null;
 
-  constructor({point, offer, destination, allDestinations, allOffers, onRollupClick, onFormSubmit}) {
+  constructor({point, offer, destination, allDestinations, allOffers, onRollupClick, onFormSubmit, onDeleteClick}) {
     super();
     this.#point = point;
     this.#offer = offer;
@@ -132,6 +132,7 @@ export default class FromEditing extends AbstractStatefulView{
     this._setState(FromEditing.parsePointToState(this.#point, this.#offer, this.#destination));
     this.#rollupHadle = onRollupClick;
     this.#formHandle = onFormSubmit;
+    this.#deleteHandle = onDeleteClick;
 
     this._restoreHandlers();
   }
@@ -151,8 +152,9 @@ export default class FromEditing extends AbstractStatefulView{
   }
 
   _restoreHandlers() {
-    this.element.querySelector('.event').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event').addEventListener('submit', this.#formHandlerSubmit);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupHandlerClick);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteHandlerClick);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeHandlerChange);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationHandlerChange);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#priceHandlerChange);
@@ -175,6 +177,16 @@ export default class FromEditing extends AbstractStatefulView{
     evt.preventDefault();
     const targetDestination = evt.target.value;
     const newDestination = this.#allDestinations.find((destination) => destination.name === targetDestination);
+
+    if (!newDestination) {
+      evt.target.value = '';
+      this.updateElement({
+        destination: '',
+        description: ''
+      });
+      return;
+    }
+
     this.updateElement({
       destination: newDestination.name,
       description: newDestination.description
@@ -184,7 +196,16 @@ export default class FromEditing extends AbstractStatefulView{
   #priceHandlerChange = (evt) => {
     evt.preventDefault();
     const newPrice = evt.target.value;
-    this._setState({
+
+    if (isNaN(newPrice)) {
+      evt.target.value = '0';
+      this.updateElement({
+        basePrice: '0'
+      });
+      return;
+    }
+
+    this.updateElement({
       basePrice: newPrice
     });
   };
@@ -229,7 +250,7 @@ export default class FromEditing extends AbstractStatefulView{
     );
   }
 
-  #formSubmitHandler = (evt) => {
+  #formHandlerSubmit = (evt) => {
     evt.preventDefault();
     this.#formHandle(FromEditing.parseStateToPoint(this._state));
   };
@@ -237,6 +258,11 @@ export default class FromEditing extends AbstractStatefulView{
   #rollupHandlerClick = (evt) => {
     evt.preventDefault();
     this.#rollupHadle();
+  };
+
+  #deleteHandlerClick = (evt) => {
+    evt.preventDefault();
+    this.#deleteHandle(FromEditing.parseStateToPoint(this._state));
   };
 
 

@@ -10,14 +10,14 @@ export const TIME_SUFFIXES = ['D', 'H', 'M'];
 
 export const FILTER_TYPES = {
   EVERYTHING: 'everything',
-  FUTUTRE: 'future',
+  FUTURE: 'future',
   PRESENT: 'present',
   PAST: 'past'
 };
 
 export const FILTERS = {
   [FILTER_TYPES.EVERYTHING]: (points) => [...points],
-  [FILTER_TYPES.FUTUTRE]: (points) => points.filter((point) => isPointFuture(point)),
+  [FILTER_TYPES.FUTURE]: (points) => points.filter((point) => isPointFuture(point)),
   [FILTER_TYPES.PRESENT]: (points) => points.filter((point) => isPointPresent(point)),
   [FILTER_TYPES.PAST]: (points) => points.filter((point) => isPointPast(point))
 };
@@ -36,3 +36,16 @@ export const SORT_TYPES = [
 ];
 
 export const CITIES = ['Paris', 'Amsterdam', 'Barcelona', 'Dublin', 'Vienna'];
+
+export const UPDATE_TYPES = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+export const USER_ACTION = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+

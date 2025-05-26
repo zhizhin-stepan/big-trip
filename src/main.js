@@ -1,8 +1,15 @@
 import Presenter from './presenter/main-presenter.js';
-// import { formatDate, formatDuration } from './utils.js';
 
-// console.log(formatDuration('2025-03-29T22:55:56.845Z', '2025-03-31T23:56:56.845Z'));
+const newPointButton = document.querySelector('.trip-main__event-add-btn');
+const boardPresenter = new Presenter();
 
-const presenter = new Presenter();
+const handleNewPointClick = (evt) => {
+  evt.preventDefault();
+  boardPresenter.createPoint();
+  newPointButton.disabled = true;
+};
 
-presenter.init();
+newPointButton.addEventListener('click', handleNewPointClick);
+
+
+boardPresenter.init();

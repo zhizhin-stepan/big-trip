@@ -34,8 +34,8 @@ export const pointsElementsMock = [
   {
     'id': '3',
     'basePrice': getRandomValue(MIN_PRICE, MAX_PRICE),
-    'dateFrom': '2025-03-31T12:34:56.789Z',
-    'dateTo': '2025-04-01T00:00:00.001Z',
+    'dateFrom': '2025-05-01T12:34:56.789Z',
+    'dateTo': '2025-06-01T00:00:00.001Z',
     'destination': getDestinationFromId('3', destinationsElementsMock),
     'isFavorite': Boolean(getRandomValue(FALSE_NUMBER, TRUE_NUMBER)),
     'offers': getOffersFromTypes(EVENT_TYPES[2], offersElementsMock),
@@ -44,8 +44,8 @@ export const pointsElementsMock = [
   {
     'id': '4',
     'basePrice': getRandomValue(MIN_PRICE, MAX_PRICE),
-    'dateFrom': '2025-04-05T18:22:44.666Z',
-    'dateTo': '2025-05-10T05:05:05.505Z',
+    'dateFrom': '2025-06-05T18:22:44.666Z',
+    'dateTo': '2025-07-10T05:05:05.505Z',
     'destination': getDestinationFromId('4', destinationsElementsMock),
     'isFavorite': Boolean(getRandomValue(FALSE_NUMBER, TRUE_NUMBER)),
     'offers': getOffersFromTypes(EVENT_TYPES[3], offersElementsMock),
