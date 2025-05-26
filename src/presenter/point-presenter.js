@@ -1,7 +1,7 @@
 import {render, replace, remove} from '../framework/render.js';
 import RoutePointElement from '../view/route-point-element-view.js';
 import FromEditing from '../view/form-editing-view.js';
-import {MODE} from '../const.js';
+import {MODE, USER_ACTION, UPDATE_TYPES} from '../const.js';
 
 
 export default class TaskPresenter {
@@ -72,8 +72,11 @@ export default class TaskPresenter {
         document.removeEventListener('keydown', this.#escKeyHandler);
       },
       onFormSubmit: (newPoint) => {
-        this.#handleDataChange({...newPoint});
+        this.#handleDataChange(USER_ACTION.UPDATE_POINT, UPDATE_TYPES.PATCH, {...newPoint});
         this.#replaceEditToTask();
+      },
+      onDeleteClick: (currentPoint) => {
+        this.#handleDataChange(USER_ACTION.DELETE_POINT, UPDATE_TYPES.MINOR, {...currentPoint});
       }
     });
 
@@ -118,6 +121,6 @@ export default class TaskPresenter {
   }
 
   #addPointToFavorite = () => {
-    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#handleDataChange(USER_ACTION.UPDATE_POINT, UPDATE_TYPES.PATCH, {...this.#point, isFavorite: !this.#point.isFavorite});
   };
 }
