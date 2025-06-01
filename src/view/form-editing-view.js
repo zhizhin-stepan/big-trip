@@ -193,7 +193,6 @@ export default class FromEditing extends AbstractStatefulView{
     });
   };
 
-
   #priceHandlerChange = (evt) => {
     evt.preventDefault();
     const newPrice = evt.target.value;
