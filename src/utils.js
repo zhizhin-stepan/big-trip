@@ -14,36 +14,6 @@ export const getRandomValue = (minPrice, maxPrice) => {
   return randomPrice;
 };
 
-
-export const getOffersFromTypes = (eventType, offersElementsArray) => {
-  let offersArray = [];
-
-  offersElementsArray.forEach((offersElement) => {
-    const {type, offers} = offersElement;
-
-    if (type === eventType) {
-      offersArray = offers;
-    }
-  });
-
-  return offersArray;
-};
-
-export const getDestinationFromId = (idNumber, destinationsElementsArray) => {
-  let destinationName = '';
-
-  destinationsElementsArray.forEach((destinationsElement) => {
-    const {id, name} = destinationsElement;
-
-    if (id === idNumber) {
-      destinationName = name;
-    }
-  });
-
-  return destinationName;
-};
-
-
 export function formatDate(date, format) {
   return dayjs(date).format(format);
 }

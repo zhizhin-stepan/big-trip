@@ -1,12 +1,26 @@
-import { destinationsElementsMock } from '../mock/destinations-mock';
+
+import Observable from '../framework/observable';
 
 
-export default class DestinationsModel {
-  constructor() {
-    this.destinations = [...destinationsElementsMock];
+export default class DestinationsModel extends Observable{
+  #destinations = null;
+  #pointsApiService = null;
+
+  constructor({pointsApiService}) {
+    super();
+    this.#pointsApiService = pointsApiService;
+
   }
 
   getDestinations() {
-    return this.destinations;
+    return this.#destinations;
+  }
+
+  async init() {
+    try {
+      this.#destinations = await this.#pointsApiService.destinations;
+    } catch(err) {
+      this.#destinations = [];
+    }
   }
 }
