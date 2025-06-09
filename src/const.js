@@ -41,11 +41,28 @@ export const UPDATE_TYPES = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT'
 };
 
 export const USER_ACTION = {
   UPDATE_POINT: 'UPDATE_POINT',
   ADD_POINT: 'ADD_POINT',
   DELETE_POINT: 'DELETE_POINT',
+};
+
+export const METHOD = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
+};
+
+export const AUTHORIZATION = 'Basic er228jdzbdw';
+
+export const END_POINT = 'https://24.objects.htmlacademy.pro/big-trip';
+
+export const TIME_LIMIT = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
 };
 

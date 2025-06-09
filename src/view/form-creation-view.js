@@ -6,7 +6,7 @@ import he from 'he';
 
 
 function createFormCreationTemplate (point) {
-  const {dateFrom : dateFrom, dateTo: dateTo, basePrice: basePrice, type: type, offers: offers, destination: name, description: description} = point;
+  const {dateFrom : dateFrom, dateTo: dateTo, basePrice: basePrice, type: type, offers: offers, destinationName: name, destinationPictures: pictures, description: description} = point;
 
   const eventTypes = EVENT_TYPES
     .map((event) =>
@@ -35,6 +35,15 @@ function createFormCreationTemplate (point) {
     })
     .join('');
 
+  const picturesList = pictures
+    .map((picture) => {
+      const src = picture.src;
+      const alt = picture.description;
+
+      return `<img class="event__photo" src="${src}" alt="${alt}">`;
+    })
+    .join('');
+
 
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
@@ -60,11 +69,16 @@ function createFormCreationTemplate (point) {
                     </label>
                     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name ? name : ''}" list="destination-list-1">
                     <datalist id="destination-list-1">
-                      <option value="Paris"></option>
+                      <option value="Valencia"></option>
+                      <option value="Venice"></option>
+                      <option value="Madrid"></option>
+                      <option value="Geneva"></option>
+                      <option value="Rome"></option>
+                      <option value="Saint Petersburg"></option>
+                      <option value="Chamonix"></option>
                       <option value="Amsterdam"></option>
-                      <option value="Barcelona"></option>
-                      <option value="Dublin"></option>
-                      <option value="Vienna"></option>
+                      <option value="Munich"></option>
+                      <option value="Den Haag"></option>
                     </datalist>
                   </div>
 
@@ -81,7 +95,7 @@ function createFormCreationTemplate (point) {
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice ? he.encode(basePrice) : '0'}" required>
+                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice ? he.encode(String(basePrice)) : '0'}" required>
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit" ${(basePrice > 0 && dateFrom !== '' && dateTo !== '' && name !== '') ? '' : 'disabled'}>Save</button>
@@ -99,6 +113,12 @@ function createFormCreationTemplate (point) {
                   ${description !== '' ? `<section class="event__section  event__section--destination">
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                     <p class="event__destination-description">${description}</p>
+
+                    <div class="event__photos-container">
+                      <div class="event__photos-tape">
+                        ${picturesList}
+                      </div>
+                    </div>
                   </section>` : ''}
                 </section>
               </form>
@@ -122,9 +142,12 @@ export default class FormCreation extends AbstractStatefulView {
       dateFrom: '',
       dateTo: '',
       destination: '',
+      destinationName: '',
+      destinationPictures: [],
       description: '',
       offers: [],
-      type: ''
+      type: '',
+      isFavorite: false,
     });
     this.#formHandle = onFormSubmit;
     this.#deleteHandle = onDeleteClick;
@@ -172,14 +195,16 @@ export default class FormCreation extends AbstractStatefulView {
     }
 
     this.updateElement({
-      destination: newDestination.name,
+      destination: newDestination.id,
+      destinationName: newDestination.name,
+      destinationPictures: newDestination.pictures,
       description: newDestination.description
     });
   };
 
   #priceHandlerChange = (evt) => {
     evt.preventDefault();
-    const newPrice = evt.target.value;
+    const newPrice = parseFloat(evt.target.value);
 
     if (isNaN(newPrice)) {
       evt.target.value = '0';
@@ -249,11 +274,16 @@ export default class FormCreation extends AbstractStatefulView {
   static parseStateToPoint(state) {
     const point = {...state};
 
-    if (!point.description) {
+    if (!point.description && !point.destinationName && !point.destinationPictures) {
       point.description = null;
+      point.destinationName = null;
+      point.destinationPictures = null;
     }
 
     delete point.description;
+    delete point.destinationName;
+    delete point.destinationPictures;
+
     return point;
   }
 }
