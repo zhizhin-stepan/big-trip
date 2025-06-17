@@ -1,24 +1,12 @@
-import dayjs from 'dayjs';
 import {TIME_SUFFIXES} from './const';
+import dayjs from 'dayjs';
 
 
-export const getRandomArrayElement = (array) => {
-  const randomELemnt = Math.floor(Math.random() * array.length);
-
-  return array[randomELemnt];
-};
-
-export const getRandomValue = (minPrice, maxPrice) => {
-  const randomPrice = Math.round(Math.random() * (maxPrice - minPrice) + minPrice);
-
-  return randomPrice;
-};
-
-export function formatDate(date, format) {
+function formatDate(date, format) {
   return dayjs(date).format(format);
 }
 
-export function formatDuration(dateFrom, dateTo) {
+function formatDuration(dateFrom, dateTo) {
   const startTime = dayjs(dateFrom);
   const endTime = dayjs(dateTo);
   const durationAllMinutes = endTime.diff(startTime, 'minute');
@@ -45,7 +33,7 @@ export function formatDuration(dateFrom, dateTo) {
 }
 
 
-export function isPointPresent(point) {
+function isPointPresent(point) {
   const now = dayjs();
   const start = dayjs(point.dateFrom);
   const end = dayjs(point.dateTo);
@@ -53,24 +41,29 @@ export function isPointPresent(point) {
          (now.isBefore(end) || now.isSame(end));
 }
 
-export function isPointFuture(point) {
+function isPointFuture(point) {
   return dayjs().isBefore(dayjs(point.dateFrom));
 }
 
-export function isPointPast(point) {
+function isPointPast(point) {
   return dayjs().isAfter(dayjs(point.dateTo));
 }
 
 
-export function sortByDay(pointA, pointB) {
+function sortByDay(pointA, pointB) {
   return new Date(pointA.dateFrom) - new Date(pointB.dateFrom);
 }
 
-export function sortByPrice(pointA, pointB) {
+function sortByPrice(pointA, pointB) {
   return pointB.basePrice - pointA.basePrice;
 }
 
-export function sortByDuration(pointA, pointB) {
+function sortByDuration(pointA, pointB) {
   return dayjs(pointB.dateTo).diff(dayjs(pointB.dateFrom)) -
     dayjs(pointA.dateTo).diff(dayjs(pointA.dateFrom));
 }
+
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+
+export {formatDate, formatDuration, isPointPresent, isPointFuture, isPointPast, sortByDay, sortByPrice, sortByDuration, isEscapeKey};

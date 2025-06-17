@@ -6,6 +6,7 @@ import Sorting from '../view/sorting-view.js';
 import RoutePointList from '../view/route-point-list-view.js';
 import EmptyPointList from '../view/empty-task-list-view.js';
 import LoadingView from '../view/loading-view.js';
+import AbortView from '../view/abort-view';
 import FiltersModel from '../model/filters-model.js';
 import TaskPresenter from '../presenter/point-presenter.js';
 import FilterPresenter from './filter-presenter.js';
@@ -14,6 +15,8 @@ import NewTaskPresenter from './new-point-presenter.js';
 
 export default class Presenter {
   #routePointListElement = null;
+  #newPointButton = null;
+  #emptyPointList = null;
   #pointsModel = null;
   #filterModel = null;
   #filterType = null;
@@ -21,6 +24,7 @@ export default class Presenter {
   #sortComponent = null;
   #filterComponent = null;
   #isLoading = true;
+  #isAbort = false;
   #uiBlocker = new UiBlocker({
     lowerLimit: TIME_LIMIT.LOWER_LIMIT,
     upperLimit: TIME_LIMIT.UPPER_LIMIT
@@ -28,17 +32,18 @@ export default class Presenter {
 
   #currentSortType = SORT_TYPES[0];
 
-  #pointsArrayInitial = [];
   #pointsArray = [];
   #filteredPointsArray = [];
   #offersArray = [];
   #destinationsArray = [];
 
   #loadingComponent = new LoadingView();
+  #abortComponent = new AbortView();
   #pointPresenters = new Map();
 
 
   constructor({pointsModel}) {
+    this.#newPointButton = document.querySelector('.trip-main__event-add-btn');
     this.#tripEvents = document.querySelector('.trip-events');
     this.#routePointListElement = new RoutePointList();
     this.#pointsModel = pointsModel;
@@ -54,7 +59,6 @@ export default class Presenter {
   }
 
   init() {
-    this.#pointsArrayInitial = [...this.#pointsModel.getPoints()];
     this.#offersArray = [...this.#pointsModel.getOffers()];
     this.#destinationsArray = [...this.#pointsModel.getDestinations()];
 
@@ -105,18 +109,31 @@ export default class Presenter {
     render(this.#loadingComponent, this.#tripEvents, RenderPosition.AFTERBEGIN);
   }
 
+  #renderAbort() {
+    render(this.#abortComponent, this.#tripEvents, RenderPosition.AFTERBEGIN);
+  }
+
 
   #renderBoard() {
-    if (this.#isLoading) {
-      this.#renderLoading();
+    if (this.#isAbort) {
+      this.#renderAbort();
       return;
     }
 
-    if (this.#pointsArrayInitial.length > 0) {
-      this.#renderFilterComponent();
+    if (this.#isLoading) {
+      this.#renderLoading();
+      this.#newPointButton.disabled = true;
+      return;
+    }
+
+    this.#sortWaypoints();
+    this.#renderFilterComponent();
+
+    if (this.#filteredPointsArray.length > 0) {
+      this.#newPointButton.disabled = false;
+      remove(this.#emptyPointList);
 
       this.#sortComponent = new Sorting({sortType: this.#currentSortType, onSortTypeChange: this.#handleSortTypeChange});
-      this.#sortWaypoints();
       render(this.#sortComponent, this.#tripEvents);
       render(this.#routePointListElement, this.#tripEvents);
 
@@ -124,7 +141,10 @@ export default class Presenter {
         this.#renderPointTask(this.#filteredPointsArray[i]);
       }
     } else {
-      render(new EmptyPointList(), this.#tripEvents);
+      this.#newPointButton.disabled = true;
+
+      this.#emptyPointList = new EmptyPointList({filterType: this.#filterType});
+      render(this.#emptyPointList, this.#tripEvents);
     }
   }
 
@@ -168,6 +188,7 @@ export default class Presenter {
     this.#pointPresenters.clear();
     remove(this.#sortComponent);
     remove(this.#loadingComponent);
+    remove(this.#abortComponent);
     remove(this.#routePointListElement);
     this.#filterComponent.destroy();
   }
@@ -223,6 +244,12 @@ export default class Presenter {
         break;
       case UPDATE_TYPES.INIT:
         this.#isLoading = false;
+        this.#newPointButton.disabled = false;
+        remove(this.#loadingComponent);
+        this.init();
+        break;
+      case UPDATE_TYPES.ABORT:
+        this.#isAbort = true;
         remove(this.#loadingComponent);
         this.init();
         break;

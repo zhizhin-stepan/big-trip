@@ -25,7 +25,6 @@ function createFiltersTemplate (filterItems) {
 export default class Filters extends AbstractView {
   #filters = null;
   #filterTypeHandle = null;
-  #filterTypeHandlerInput = null;
 
   constructor({filters, onFilterTypeChange}) {
     super();
@@ -33,10 +32,10 @@ export default class Filters extends AbstractView {
     this.#filterTypeHandle = onFilterTypeChange;
 
     this.element.querySelectorAll('.trip-filters__filter-input').forEach((element) => {
-      element.addEventListener('input', this.#filterTypeHandlerInput = (evt) => {
+      element.addEventListener('input', ((evt) => {
         evt.preventDefault();
         this.#filterTypeHandle(element.value);
-      });
+      }));
     });
   }
 

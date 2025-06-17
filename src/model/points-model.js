@@ -24,6 +24,8 @@ export default class PointsModel extends Observable{
       this.#points = [];
       this.#offers = [];
       this.#destinations = [];
+      this._notify(UPDATE_TYPES.ABORT);
+      throw new Error('Cant get a connection with the server');
     }
     this._notify(UPDATE_TYPES.INIT);
   }

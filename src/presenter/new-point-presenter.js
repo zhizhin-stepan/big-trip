@@ -1,6 +1,6 @@
 import {render, remove, RenderPosition} from '../framework/render.js';
 import {USER_ACTION, UPDATE_TYPES} from '../const.js';
-import { nanoid } from 'nanoid';
+import {isEscapeKey} from '../utils.js';
 import FormCreation from '../view/form-creation-view.js';
 
 export default class NewTaskPresenter {
@@ -14,9 +14,10 @@ export default class NewTaskPresenter {
   #handleDataChange = null;
 
   #escKeyHandler = (evt) => {
-    if (evt.key === 'Escape') {
+    if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.destroy();
+      this.#newPointButtonComponent.disabled = false;
     }
   };
 
@@ -38,7 +39,7 @@ export default class NewTaskPresenter {
       allDestinations: this.#allDestinations,
       allOffers: this.#allOffers,
       onFormSubmit: (newPoint) => {
-        this.#handleDataChange(USER_ACTION.ADD_POINT, UPDATE_TYPES.MINOR, {id: nanoid(), ...newPoint});
+        this.#handleDataChange(USER_ACTION.ADD_POINT, UPDATE_TYPES.MINOR, newPoint);
         this.#newPointButtonComponent.disabled = false;
       },
       onDeleteClick: () => {

@@ -69,16 +69,16 @@ function createFormCreationTemplate (point) {
                     </label>
                     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name ? name : ''}" list="destination-list-1">
                     <datalist id="destination-list-1">
-                      <option value="Valencia"></option>
-                      <option value="Venice"></option>
-                      <option value="Madrid"></option>
-                      <option value="Geneva"></option>
+                      <option value="Oslo"></option>
+                      <option value="Tokio"></option>
+                      <option value="Moscow"></option>
+                      <option value="Hiroshima"></option>
+                      <option value="Barcelona"></option>
+                      <option value="Vien"></option>
                       <option value="Rome"></option>
-                      <option value="Saint Petersburg"></option>
+                      <option value="Berlin"></option>
+                      <option value="Valencia"></option>
                       <option value="Chamonix"></option>
-                      <option value="Amsterdam"></option>
-                      <option value="Munich"></option>
-                      <option value="Den Haag"></option>
                     </datalist>
                   </div>
 
@@ -99,7 +99,7 @@ function createFormCreationTemplate (point) {
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit" ${(basePrice > 0 && dateFrom !== '' && dateTo !== '' && name !== '') ? '' : 'disabled'}>Save</button>
-                  <button class="event__reset-btn" type="reset">Delete</button>
+                  <button class="event__reset-btn" type="reset">Cancel</button>
                 </header>
                 <section class="event__details">
                   ${offersList.length > 0 ? `<section class="event__section  event__section--offers">
@@ -130,8 +130,6 @@ export default class FormCreation extends AbstractStatefulView {
   #allOffers = null;
   #formHandle = null;
   #deleteHandle = null;
-  #datepickerStart = null;
-  #datepickerEnd = null;
 
   constructor({allDestinations, allOffers, onFormSubmit, onDeleteClick}) {
     super();
@@ -145,8 +143,13 @@ export default class FormCreation extends AbstractStatefulView {
       destinationName: '',
       destinationPictures: [],
       description: '',
-      offers: [],
-      type: '',
+      offers: [{id: '04e0b3f3-e345-4b02-9060-e7a64674df53', title: 'Choose meal', price: 37},
+        {id: '9d1df0b1-3018-4c30-b5a6-7cd6127b7a9d', title: 'Choose seats', price: 78},
+        {id: '1bb31503-c496-4f8d-a9e1-bba0b852ed4e', title: 'Upgrade to comfort class', price: 147},
+        {id: '0fbc6ec7-0112-4993-b189-98d495989105', title: 'Upgrade to business class', price: 50},
+        {id: 'dd90609f-6355-4a31-b23a-bc736b66dfae', title: 'Add luggage', price: 58},
+        {id: '0e614473-7ef6-4421-bf23-85d86c7358e2', title: 'Business lounge', price: 152}],
+      type: 'flight',
       isFavorite: false,
     });
     this.#formHandle = onFormSubmit;
@@ -232,7 +235,7 @@ export default class FormCreation extends AbstractStatefulView {
   };
 
   #setDatePickerStart() {
-    this.#datepickerStart = flatpickr(
+    flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
         dateFormat: 'd/m/y H:i',
@@ -246,7 +249,7 @@ export default class FormCreation extends AbstractStatefulView {
   }
 
   #setDatePickerEnd() {
-    this.#datepickerEnd = flatpickr(
+    flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {
         dateFormat: 'd/m/y H:i',

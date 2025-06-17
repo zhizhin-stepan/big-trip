@@ -71,16 +71,16 @@ function createFormEditingTemplate (point) {
                     </label>
                     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(name)}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
                     <datalist id="destination-list-1">
-                      <option value="Valencia"></option>
-                      <option value="Venice"></option>
-                      <option value="Madrid"></option>
-                      <option value="Geneva"></option>
+                      <option value="Oslo"></option>
+                      <option value="Tokio"></option>
+                      <option value="Moscow"></option>
+                      <option value="Hiroshima"></option>
+                      <option value="Barcelona"></option>
+                      <option value="Vien"></option>
                       <option value="Rome"></option>
-                      <option value="Saint Petersburg"></option>
+                      <option value="Berlin"></option>
+                      <option value="Valencia"></option>
                       <option value="Chamonix"></option>
-                      <option value="Amsterdam"></option>
-                      <option value="Munich"></option>
-                      <option value="Den Haag"></option>
                     </datalist>
                   </div>
 
@@ -139,8 +139,6 @@ export default class FromEditing extends AbstractStatefulView{
   #rollupHadle = null;
   #formHandle = null;
   #deleteHandle = null;
-  #datepickerStart = null;
-  #datepickerEnd = null;
 
   constructor({point, offer, destination, allDestinations, allOffers, onRollupClick, onFormSubmit, onDeleteClick}) {
     super();
@@ -247,7 +245,7 @@ export default class FromEditing extends AbstractStatefulView{
   };
 
   #setDatePickerStart() {
-    this.#datepickerStart = flatpickr(
+    flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
         dateFormat: 'd/m/y H:i',
@@ -261,7 +259,7 @@ export default class FromEditing extends AbstractStatefulView{
   }
 
   #setDatePickerEnd() {
-    this.#datepickerEnd = flatpickr(
+    flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {
         dateFormat: 'd/m/y H:i',

@@ -1,7 +1,8 @@
 import {render, replace, remove} from '../framework/render.js';
+import {isEscapeKey} from '../utils.js';
+import {MODE, USER_ACTION, UPDATE_TYPES} from '../const.js';
 import RoutePointElement from '../view/route-point-element-view.js';
 import FromEditing from '../view/form-editing-view.js';
-import {MODE, USER_ACTION, UPDATE_TYPES} from '../const.js';
 
 
 export default class TaskPresenter {
@@ -20,7 +21,7 @@ export default class TaskPresenter {
   #handleDataChange = null;
 
   #escKeyHandler = (evt) => {
-    if (evt.key === 'Escape') {
+    if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.#pointEdit.reset();
       this.#replaceEditToTask();

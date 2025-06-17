@@ -30,12 +30,12 @@ export default class Sorting extends AbstractView{
     this.element.addEventListener('change', this.#handleSortTypeChange);
   }
 
+  get template() {
+    return createSortingTemplate(this.#sortType);
+  }
+
   #handleSortTypeChange = (evt) => {
     evt.preventDefault();
     this.#onSortTypeChange(evt.target.dataset.sortType);
   };
-
-  get template() {
-    return createSortingTemplate(this.#sortType);
-  }
 }
